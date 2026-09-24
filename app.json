@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "0fe1996e-72ae-4dd2-b78d-3fd5d55b3eca"
+      }
+    },
+    "android": {
+      "package": "com.kiyann.energymapp"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-asset"
+    ]
+  }
+}
