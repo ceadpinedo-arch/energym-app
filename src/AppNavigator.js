@@ -12,11 +12,16 @@ import ListaSociosScreen from './screens/ListaSociosScreen';
 import PagoEfectivoScreen from './screens/PagoEfectivoScreen';
 import AltaSocioScreen from './screens/AltaSocioScreen';
 import DetalleSocioScreen from './screens/DetalleSocioScreen';
+import AparienciaScreen from './screens/AparienciaScreen';
+import DatosGimnasioScreen from './screens/DatosGimnasioScreen';
+import { ThemeProvider } from './theme/ThemeContext';
+import QRAccesoScreen from './screens/QRAccesoScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
+    <ThemeProvider>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -29,7 +34,11 @@ export default function AppNavigator() {
         <Stack.Screen name="PagoEfectivo" component={PagoEfectivoScreen} />
         <Stack.Screen name="AltaSocio" component={AltaSocioScreen} />
         <Stack.Screen name="DetalleSocio" component={DetalleSocioScreen} />
+            <Stack.Screen name="Apariencia" component={AparienciaScreen} />
+            <Stack.Screen name="DatosGimnasio" component={DatosGimnasioScreen} />
+            <Stack.Screen name="QRAcceso" component={QRAccesoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </ThemeProvider>
   );
 }

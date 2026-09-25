@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
+import { useAppTheme } from '../theme/ThemeContext';
 
 export default function PanelAdminScreen({ navigation, route }) {
   const { token } = route.params;
-  const isDark = useColorScheme() === 'dark';
-  const t = getTheme(isDark);
+  const t = useAppTheme();
 
   const [socios, setSocios] = useState([]);
   const [resumen, setResumen] = useState({ totalMes: 0, cantidadPagos: 0 });
@@ -64,6 +64,7 @@ export default function PanelAdminScreen({ navigation, route }) {
         <QuickLink t={t} label="Registrar pago en efectivo" onPress={() => navigation.navigate('PagoEfectivo', { token })} />
         <QuickLink t={t} label="Biblioteca de ejercicios" onPress={() => navigation.navigate('Biblioteca', { token, admin: true })} />
         <QuickLink t={t} label="Dar de alta un socio" onPress={() => navigation.navigate('AltaSocio', { token })} />
+      <QuickLink t={t} label="Datos del gimnasio" onPress={() => navigation.navigate('DatosGimnasio', { token })} />
       </View>
     </ScrollView>
   );
