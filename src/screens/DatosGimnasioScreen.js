@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Image, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, Image, ActivityIndicator, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAppTheme } from '../theme/ThemeContext';
 import { API_URL } from '../config';
@@ -13,12 +13,22 @@ export default function DatosGimnasioScreen({ route }) {
   const [logoBase64, setLogoBase64] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  const [cuota, setCuota] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [alias, setAlias] = useState('');
+  const [cbu, setCbu] = useState('');
 
   useEffect(() => {
     fetch(`${API_URL}/api/gimnasio/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => res.json())
       .then((data) => {
         setNombre(data.nombre || '');
+        setCuota(data.cuota ? String(data.cuota) : '');
+    setWhatsapp(data.whatsapp || '');
+    setInstagram(data.instagram || '');
+    setAlias(data.alias || '');
+    setCbu(data.cbu || '');
         setLogoUrl(data.logoUrl || null);
       })
       .catch((err) => console.error('Error gimnasio:', err))
@@ -54,6 +64,15 @@ export default function DatosGimnasioScreen({ route }) {
     setGuardando(true);
     try {
       const body = { nombre: nombre.trim() };
+      const cuotaNum = Number(String(cuota).replace(/\D/g, ''));
+      if (!cuotaNum) { Alert.alert('Cuota inválida', 'Ingresá un monto mayor a 0.'); return; }
+      body.cuota = cuotaNum;
+  body.whatsapp = whatsapp;
+  body.instagram = instagram;
+  const cbuLimpio = String(cbu).replace(/\D/g, '');
+  if (cbuLimpio && cbuLimpio.length !== 22) { Alert.alert('CBU inválido', 'El CBU debe tener 22 dígitos.'); return; }
+  body.alias = alias;
+  body.cbu = cbu;
       if (logoBase64) body.logoBase64 = logoBase64;
 
       const res = await fetch(`${API_URL}/api/gimnasio/me`, {
@@ -62,6 +81,11 @@ export default function DatosGimnasioScreen({ route }) {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error('Error al guardar');
+  const guardado = await res.json();
+  setWhatsapp(guardado.whatsapp || '');
+  setInstagram(guardado.instagram || '');
+  setAlias(guardado.alias || '');
+  setCbu(guardado.cbu || '');
       Alert.alert('Listo', 'Los datos del gimnasio se guardaron correctamente.');
       setLogoBase64(null);
     } catch (err) {
@@ -81,7 +105,7 @@ export default function DatosGimnasioScreen({ route }) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: t.bg }]}>
+    <ScrollView style={{ flex: 1, backgroundColor: t.bg }} contentContainerStyle={{ padding: 20, paddingBottom: 60 }} keyboardShouldPersistTaps="handled">
       <Text style={[styles.titulo, { color: t.textPrimary }]}>Datos del gimnasio</Text>
 
       <Pressable onPress={elegirLogo} style={styles.logoWrap}>
@@ -104,7 +128,59 @@ export default function DatosGimnasioScreen({ route }) {
         style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
       />
 
-      <Pressable
+      <Text style={[styles.label, { color: t.textSecondary }]}>WhatsApp (con código de país)</Text>
+  <TextInput
+    value={whatsapp}
+    onChangeText={setWhatsapp}
+    keyboardType="phone-pad"
+    placeholder="5493511234567"
+    placeholderTextColor={t.textSecondary}
+    style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
+  />
+
+  <Text style={[styles.label, { color: t.textSecondary }]}>Instagram (usuario o link)</Text>
+  <TextInput
+    value={instagram}
+    onChangeText={setInstagram}
+    autoCapitalize="none"
+    autoCorrect={false}
+    placeholder="energym.com.ar"
+    placeholderTextColor={t.textSecondary}
+    style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
+  />
+
+  <Text style={[styles.label, { color: t.textSecondary }]}>Alias para transferencias</Text>
+  <TextInput
+    value={alias}
+    onChangeText={setAlias}
+    autoCapitalize="none"
+    autoCorrect={false}
+    placeholder="mi.gimnasio.mp"
+    placeholderTextColor={t.textSecondary}
+    style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
+  />
+
+  <Text style={[styles.label, { color: t.textSecondary }]}>CBU (22 dígitos)</Text>
+  <TextInput
+    value={cbu}
+    onChangeText={setCbu}
+    keyboardType="numeric"
+    placeholder="0000000000000000000000"
+    placeholderTextColor={t.textSecondary}
+    style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
+  />
+
+  <Text style={[styles.label, { color: t.textSecondary }]}>Cuota mensual ($)</Text>
+        <TextInput
+          value={cuota}
+          onChangeText={setCuota}
+          keyboardType="numeric"
+          placeholder="15000"
+          placeholderTextColor={t.textSecondary}
+          style={[styles.input, { color: t.textPrimary, borderColor: t.border, backgroundColor: t.surface }]}
+        />
+
+        <Pressable
         onPress={guardar}
         disabled={guardando}
         style={[styles.boton, { backgroundColor: t.primary, opacity: guardando ? 0.6 : 1 }]}
@@ -115,7 +191,7 @@ export default function DatosGimnasioScreen({ route }) {
           <Text style={{ color: t.onPrimary, fontWeight: '700' }}>Guardar cambios</Text>
         )}
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 

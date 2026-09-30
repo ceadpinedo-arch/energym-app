@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import useTeclado from '../components/useTeclado';
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
+import { useAppTheme } from '../theme/ThemeContext';
 
 export default function AltaSocioScreen({ navigation, route }) {
+  const [verPassword, setVerPassword] = useState(false);
+  const teclado = useTeclado();
   const { token, onCreated } = route.params;
-  const isDark = useColorScheme() === 'dark';
-  const t = getTheme(isDark);
+  const t = useAppTheme();
 
   const [dni, setDni] = useState('');
   const [nombre, setNombre] = useState('');
@@ -42,6 +45,7 @@ export default function AltaSocioScreen({ navigation, route }) {
   }
 
   return (
+    <View style={{ flex: 1, backgroundColor: t.bg, paddingBottom: teclado > 0 ? teclado + 8 : 0 }}>
     <View style={{ flex: 1, backgroundColor: t.bg, padding: 16, justifyContent: 'center' }}>
       <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Text style={{ color: t.textPrimary, fontSize: 19, fontWeight: '700', marginBottom: 20 }}>
@@ -82,11 +86,16 @@ export default function AltaSocioScreen({ navigation, route }) {
         <TextInput
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
+          secureTextEntry={!verPassword}
           placeholder="••••••••"
           placeholderTextColor={t.textSecondary}
           style={[styles.input, { borderColor: t.border, color: t.textPrimary }]}
         />
+      <Pressable onPress={() => setVerPassword((v) => !v)} hitSlop={8} style={{ alignSelf: 'flex-end', marginTop: 6 }}>
+        <Text style={{ color: t.primary, fontSize: 13, fontWeight: '600' }}>
+          {verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+        </Text>
+      </Pressable>
 
         {error ? <Text style={{ color: t.danger, fontSize: 13, marginTop: 8 }}>{error}</Text> : null}
         {listo ? <Text style={{ color: t.success, fontSize: 13, marginTop: 8 }}>Socio creado ✓</Text> : null}
@@ -101,6 +110,7 @@ export default function AltaSocioScreen({ navigation, route }) {
           </Text>
         </Pressable>
       </View>
+    </View>
     </View>
   );
 }

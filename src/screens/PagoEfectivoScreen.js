@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, FlatList, StyleSheet, useColorScheme } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
+import { useAppTheme } from '../theme/ThemeContext';
 
 function periodoActual() {
   const d = new Date();
@@ -10,19 +11,25 @@ function periodoActual() {
 
 export default function PagoEfectivoScreen({ navigation, route }) {
   const { token, socio: socioParam, onPaid } = route.params;
-  const isDark = useColorScheme() === 'dark';
-  const t = getTheme(isDark);
+  const t = useAppTheme();
 
   const [socio, setSocio] = useState(socioParam || null);
   const [socios, setSocios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [cargandoSocios, setCargandoSocios] = useState(false);
 
-  const [monto, setMonto] = useState('15000');
+  const [monto, setMonto] = useState('');
   const [periodo, setPeriodo] = useState(periodoActual());
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [listo, setListo] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/gimnasio/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => res.json())
+      .then((g) => { if (g && g.cuota) setMonto(String(g.cuota)); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (socio) return;

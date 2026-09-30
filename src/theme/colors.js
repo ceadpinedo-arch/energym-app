@@ -1,29 +1,35 @@
 export const light = {
-  bg: '#EDEAF9',
+  bg: '#E3F3EE',
   surface: '#FFFFFF',
-  border: '#E4E1F0',
-  textPrimary: '#1A1A1A',
-  textSecondary: '#8B889B',
-  primary: '#534AB7',
+  border: '#D3E8E1',
+  textPrimary: '#1F2D2B',
+  textSecondary: '#6F8580',
+  primary: '#2F8F83',
   onPrimary: '#FFFFFF',
-  primaryBg: '#EEEDFE',
-  success: '#3B6D11',
-  successBg: '#EAF3DE',
-  warning: '#854F0B',
+  primaryBg: '#D8F0EA',
+  coral: '#F08A6C',
+  coralBg: '#FDE7DF',
+  gradient: ['#D9F2EA', '#FBEADF'],
+  success: '#2E7D4F',
+  successBg: '#E1F3E8',
+  warning: '#9A5B0B',
   warningBg: '#FAEEDA',
   danger: '#A32D2D',
   dangerBg: '#FCEBEB',
 };
 
 export const dark = {
-  bg: '#1E1B2E',
-  surface: '#26213B',
-  border: '#3C3459',
-  textPrimary: '#F1EFE8',
-  textSecondary: '#B4B2A9',
-  primary: '#AFA9EC',
-  onPrimary: '#26213B',
-  primaryBg: '#3C3459',
+  bg: '#14201E',
+  surface: '#1D2D2A',
+  border: '#2E4541',
+  textPrimary: '#EAF5F2',
+  textSecondary: '#9DB5B0',
+  primary: '#5FD1BF',
+  onPrimary: '#0F1F1C',
+  primaryBg: '#25403B',
+  coral: '#FF9E82',
+  coralBg: '#4A2A20',
+  gradient: ['#14201E', '#1F2A28'],
   success: '#97C459',
   successBg: '#173404',
   warning: '#FAC775',
@@ -32,8 +38,17 @@ export const dark = {
   dangerBg: '#501313',
 };
 
-// Hook simple: reemplazar por useColorScheme() de React Native
-// combinado con la preferencia guardada del usuario (claro / oscuro / auto).
-export function getTheme(isDark) {
-  return isDark ? dark : light;
+export const accents = {
+  menta:   { light: '#2F8F83', dark: '#5FD1BF' },
+  violeta: { light: '#534AB7', dark: '#AFA9EC' },
+  verde:   { light: '#1F7A4D', dark: '#5FD79B' },
+  naranja: { light: '#B4560A', dark: '#FFB067' },
+  rosa:    { light: '#B03060', dark: '#FF9EC0' },
+  celeste: { light: '#0B6FA8', dark: '#7FD1FF' },
+};
+
+export function getTheme(isDark, accentKey = 'menta') {
+  const base = isDark ? dark : light;
+  const accent = accents[accentKey] || accents.menta;
+  return { ...base, primary: isDark ? accent.dark : accent.light };
 }

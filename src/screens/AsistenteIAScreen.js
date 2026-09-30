@@ -12,11 +12,24 @@ import {
 } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
+import { useAppTheme } from '../theme/ThemeContext';
+import useTeclado from '../components/useTeclado';
+
+function conNegritas(texto) {
+  const limpio = String(texto || '').replace(/^[ \t]*[*-][ \t]+/gm, '• ');
+  return limpio.split(/\*\*([\s\S]+?)\*\*/).map((p, i) =>
+    i % 2 === 1 ? (
+      <Text key={i} style={{ fontWeight: '700' }}>{p}</Text>
+    ) : (
+      p
+    )
+  );
+}
 
 export default function AsistenteIAScreen({ route }) {
   const { token } = route.params;
-  const isDark = useColorScheme() === 'dark';
-  const t = getTheme(isDark);
+  const t = useAppTheme();
+  const teclado = useTeclado();
 
   const [mensajes, setMensajes] = useState([
     { role: 'assistant', content: '¡Hola! Soy el asistente de Energym. ¿En qué te puedo ayudar hoy?' },
@@ -58,9 +71,9 @@ export default function AsistenteIAScreen({ route }) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: t.bg }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={undefined}
     >
-      <View style={{ flex: 1, padding: 16 }}>
+      <View style={{ flex: 1, padding: 16, paddingBottom: teclado > 0 ? teclado + 8 : 72 }}>
         <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border, flex: 1 }]}>
           <Text style={{ color: t.textPrimary, fontSize: 19, fontWeight: '700', marginBottom: 12 }}>
             Asistente Energym
@@ -80,12 +93,13 @@ export default function AsistenteIAScreen({ route }) {
                 ]}
               >
                 <Text style={{ color: item.role === 'user' ? t.onPrimary : t.textPrimary, fontSize: 14 }}>
-                  {item.content}
+                  {item.role === 'user' ? item.content : conNegritas(item.content)}
                 </Text>
               </View>
             )}
             style={{ flex: 1 }}
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+        onLayout={() => listRef.current?.scrollToEnd({ animated: true })}
           />
 
           <View style={styles.inputRow}>

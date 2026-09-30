@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, FlatList, Image, Alert, StyleSheet, ActivityIndicator, Modal, Linking, TextInput } from 'react-native';
+import { View, Text, Pressable, ScrollView, FlatList, Image, Alert, StyleSheet, ActivityIndicator, Modal, Linking, TextInput, Vibration } from 'react-native';
 import { API_URL } from '../config';
+import Cronometro from '../components/Cronometro';
+import EjercicioItem from '../components/EjercicioItem';
+import Contador from '../components/Contador';
 
 const GRUPOS = ['TODOS', 'PECHO', 'ESPALDA', 'PIERNAS', 'BRAZOS', 'HOMBROS', 'ABDOMEN'];
 
@@ -206,7 +209,8 @@ const [detalle, setDetalle] = useState(null);
   const ejerciciosFiltrados = ejercicios.filter((e) => {
     if (grupo === 'TODOS') return true;
     const g = (e.grupo || e.grupoMuscular || '').toUpperCase();
-    return g === grupo.toUpperCase();
+    const MAPA_GRUPOS = { BICEPS: 'BRAZOS', TRICEPS: 'BRAZOS', HOMBRO: 'HOMBROS', ABDOMINALES: 'ABDOMEN' };
+  return (MAPA_GRUPOS[g] || g) === grupo.toUpperCase();
   });
 
   return (
@@ -214,8 +218,8 @@ const [detalle, setDetalle] = useState(null);
       <View style={styles.card}>
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>Ejercicios TEST</Text>
-            <Text style={styles.subtitle}>Tu rutina: {seleccionados.length} seleccionados</Text>
+            <Text style={styles.title}>Ejercicios</Text>
+            <Contador n={seleccionados.length} style={styles.subtitle} />
           </View>
           <Pressable onPress={abrirRutina} style={styles.saveBtn}>
             <Text style={styles.saveBtnText}>Ver rutina</Text>
@@ -241,35 +245,19 @@ const [detalle, setDetalle] = useState(null);
           <ActivityIndicator size="large" color="#3B82F6" style={{ marginTop: 20 }} />
         ) : (
           <FlatList
+            key={grupo}
             data={ejerciciosFiltrados}
             keyExtractor={(item, index) => (item && item.id ? String(item.id) : String(index))}
-            renderItem={({ item }) => {
-              const idStr = String(item.id);
-              const activo = seleccionados.includes(idStr);
-              const imgUri = item.imagenUrl || item.imagen || item.uri || item.url;
-
-              return (
-                <Pressable style={styles.row} onPress={() => setDetalle(item)}>
-                  <View style={styles.thumb}>
-                    {imgUri && typeof imgUri === 'string' && imgUri.startsWith('http') ? (
-                      <Image source={{ uri: imgUri }} style={styles.img} resizeMode="cover" />
-                    ) : (
-                      <Text style={styles.thumbFallback}>💪</Text>
-                    )}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.itemTitle}>{item.nombre || 'Ejercicio'}</Text>
-                    <Text style={styles.itemDesc}>{item.descripcion || 'Sin descripción'}</Text>
-                  </View>
-                  <Pressable
-                    onPress={() => toggle(idStr)}
-                    style={[styles.check, activo && styles.checkActive]}
-                  >
-                    {activo && <Text style={styles.checkText}>✓</Text>}
-                  </Pressable>
-                </Pressable>
-              );
-            }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+            renderItem={({ item, index }) => (
+          <EjercicioItem
+            item={item}
+            index={index}
+            activo={seleccionados.includes(String(item.id))}
+            onOpen={() => setDetalle(item)}
+            onToggle={() => toggle(String(item.id))}
+          />
+        )}
           />
         )}
       
@@ -301,7 +289,7 @@ const [detalle, setDetalle] = useState(null);
 
       <Modal visible={rutinaVisible} transparent animationType="slide" onRequestClose={() => setRutinaVisible(false)}>
         <View style={styles.modalFondo}>
-          <View style={[styles.modalCard, { maxHeight: '85%' }]}>
+          <View style={[styles.modalCard, { maxHeight: '94%' }]}>
             <Text style={styles.modalTitulo}>Mi rutina</Text>
             <Text style={styles.modalDesc}>{seleccionados.length} ejercicios</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
@@ -368,49 +356,21 @@ const [detalle, setDetalle] = useState(null);
             <Pressable style={styles.spotifyBtn} onPress={() => Linking.openURL(SPOTIFY_URL)}>
               <Text style={styles.modalBtnText}>Escuchar en Spotify</Text>
             </Pressable>
-            <Pressable style={styles.modalBtn} onPress={guardarEntreno}>
-              <Text style={styles.modalBtnText}>Guardar entrenamiento</Text>
-            </Pressable>
-            <Pressable style={styles.modalBtn} onPress={() => setRutinaVisible(false)}>
-              <Text style={styles.modalBtnText}>Listo</Text>
-            </Pressable>
+            <View style={styles.btnFila}>
+          <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={guardarEntreno}>
+            <Text style={styles.modalBtnText}>Guardar entreno</Text>
+          </Pressable>
+          <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={() => setRutinaVisible(false)}>
+            <Text style={styles.modalBtnText}>Listo</Text>
+          </Pressable>
+        </View>
           </View>
         </View>
       </Modal>
 
 </View>
     
-        {timerAbierto && (
-          <View style={styles.timerPanel}>
-            <Text style={styles.timerTexto}>{formatoTiempo(segundos)}</Text>
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-              <Pressable style={styles.timerBtnChico} onPress={() => setSegundos((s) => Math.max(0, s - 15))}>
-                <Text style={styles.timerBtnChicoTexto}>-15</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.timerBtnChico, { backgroundColor: '#3B82F6' }]}
-                onPress={() => setTimerCorriendo((c) => !c)}
-              >
-                <Text style={styles.timerBtnChicoTexto}>{timerCorriendo ? 'Pausar' : 'Iniciar'}</Text>
-              </Pressable>
-              <Pressable style={styles.timerBtnChico} onPress={() => setSegundos((s) => s + 15)}>
-                <Text style={styles.timerBtnChicoTexto}>+15</Text>
-              </Pressable>
-            </View>
-            <Pressable
-              onPress={() => { setTimerCorriendo(false); setSegundos(90); }}
-              style={{ marginTop: 8 }}
-            >
-              <Text style={{ color: '#94A3B8', fontSize: 12 }}>Reiniciar</Text>
-            </Pressable>
-          </View>
-        )}
-        <Pressable
-          style={styles.timerFab}
-          onPress={() => setTimerAbierto((v) => !v)}
-        >
-          <Text style={{ fontSize: 24 }}>⏱</Text>
-        </Pressable>
+        <Cronometro bottom={84} />
       </View>
     );
 }
@@ -418,25 +378,27 @@ const [detalle, setDetalle] = useState(null);
 const SPOTIFY_URL = 'https://open.spotify.com/playlist/6ypUvnU30JFjyfzTzG5VBM';
 
 const styles = StyleSheet.create({
-  diaChip: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14, borderWidth: 1, borderColor: '#334155' },
+  diaChip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: '#334155' },
   diaChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  diaChipTexto: { color: '#94A3B8', fontSize: 11 },
+  diaChipTexto: { color: '#94A3B8', fontSize: 13 },
   diaChipTextoActive: { color: '#FFFFFF', fontWeight: '600' },
   timerFab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, backgroundColor: '#3B82F6', alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 6 },
   timerPanel: { position: 'absolute', bottom: 90, right: 20, backgroundColor: '#1E293B', borderRadius: 16, padding: 16, alignItems: 'center', elevation: 6 },
   timerTexto: { color: '#F8FAFC', fontSize: 32, fontWeight: '700' },
   timerBtnChico: { backgroundColor: '#334155', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
   timerBtnChicoTexto: { color: '#F8FAFC', fontWeight: '600', fontSize: 13 },
-  inputMini: { backgroundColor: '#1E293B', color: '#F8FAFC', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 4, width: 54, fontSize: 12 },
+  inputMini: { flex: 1, backgroundColor: '#0F172A', color: '#F8FAFC', borderRadius: 12, borderWidth: 1, borderColor: '#334155', paddingHorizontal: 8, paddingVertical: 12, fontSize: 17, fontWeight: '700', textAlign: 'center' },
   ultimaVez: { color: '#94A3B8', fontSize: 11, marginTop: 4 },
-  spotifyBtn: { backgroundColor: '#1DB954', borderRadius: 12, padding: 14, marginTop: 12, alignItems: 'center' },
-  modalFondo: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 },
+  spotifyBtn: { backgroundColor: '#1DB954', borderRadius: 12, padding: 10, marginTop: 10, alignItems: 'center' },
+  modalFondo: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 10 },
   modalCard: { backgroundColor: '#1E293B', borderRadius: 20, padding: 16 },
   modalImg: { width: '100%', height: 320, borderRadius: 12, backgroundColor: '#fff' },
   modalTitulo: { color: '#F8FAFC', fontSize: 22, fontWeight: 'bold', marginTop: 14 },
   modalDesc: { color: '#94A3B8', fontSize: 14, marginTop: 6 },
   modalBtn: { backgroundColor: '#3B82F6', borderRadius: 12, padding: 14, marginTop: 16, alignItems: 'center' },
   modalBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  btnFila: { flexDirection: 'row', gap: 10, marginTop: 10 },
+  btnFilaItem: { flex: 1, marginTop: 0, paddingVertical: 12 },
   rutinaRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#0F172A', borderRadius: 14, padding: 10, marginBottom: 10 },
   rutinaImg: { width: 56, height: 56, borderRadius: 10, backgroundColor: '#fff' },
   rutinaQuitar: { color: '#F87171', fontSize: 18, fontWeight: 'bold', paddingHorizontal: 6 },

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
+import { useAppTheme } from '../theme/ThemeContext';
 
 export default function ListaSociosScreen({ navigation, route }) {
   const { token } = route.params;
-  const isDark = useColorScheme() === 'dark';
-  const t = getTheme(isDark);
+  const t = useAppTheme();
 
   const [socios, setSocios] = useState(route.params.socios || []);
   const [cargando, setCargando] = useState(true);

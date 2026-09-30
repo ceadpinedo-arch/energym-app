@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useTeclado from '../components/useTeclado';
 import {
   View,
   Text,
@@ -33,6 +34,7 @@ async function registrarPush(token, apiUrl) {
 }
 
 export default function LoginScreen({ navigation }) {
+  const teclado = useTeclado();
   const systemScheme = useColorScheme();
   const [isDark, setIsDark] = useState(systemScheme === 'dark');
   const t = getTheme(isDark);
@@ -73,6 +75,7 @@ export default function LoginScreen({ navigation }) {
   }
 
   return (
+    <View style={{ flex: 1, backgroundColor: t.bg, paddingBottom: teclado > 0 ? teclado + 8 : 0 }}>
     <View style={[styles.wrap, { backgroundColor: t.bg }]}>
       <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]}>
         <View style={styles.headerRow}>
@@ -159,6 +162,7 @@ export default function LoginScreen({ navigation }) {
           </Text>
         </Pressable>
       </View>
+    </View>
     </View>
   );
 }

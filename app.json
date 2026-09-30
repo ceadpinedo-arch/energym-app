@@ -10,7 +10,13 @@
     },
     "plugins": [
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Energym necesita la c\u00e1mara para escanear el QR de acceso al gimnasio."
+        }
+      ]
     ]
   }
 }
