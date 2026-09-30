@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, Animated, Easing, Vibration, StyleSheet } from 'react-native';
+import { useAppTheme } from '../theme/ThemeContext';
 
 const PRESETS = [30, 60, 90, 120];
 
@@ -10,6 +11,8 @@ const fmt = (s) => {
 };
 
 export default function Cronometro({ bottom = 84 }) {
+  const t = useAppTheme();
+  const styles = makeStyles(t);
   const [abierto, setAbierto] = useState(false);
   const [total, setTotal] = useState(90);
   const [restante, setRestante] = useState(90);
@@ -109,11 +112,11 @@ export default function Cronometro({ bottom = 84 }) {
     setCorriendo((c) => !c);
   };
 
-  const colorFab = terminado ? '#22C55E' : '#3B82F6';
+  const colorFab = terminado ? t.success : t.primary;
   const urgente = corriendo && restante <= 5;
   const barraColor = progreso.interpolate({
     inputRange: [0, 0.2, 0.5, 1],
-    outputRange: ['#EF4444', '#F59E0B', '#3B82F6', '#3B82F6'],
+    outputRange: [t.danger, '#F59E0B', t.primary, t.primary],
   });
   const barraAncho = progreso.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
   const haloScale = pulso.interpolate({ inputRange: [0, 1], outputRange: [1, 1.9] });
@@ -140,7 +143,7 @@ export default function Cronometro({ bottom = 84 }) {
             style={[
               styles.tiempo,
               {
-                color: urgente ? '#F87171' : terminado ? '#22C55E' : '#F8FAFC',
+                color: urgente ? t.danger : terminado ? t.success : t.textPrimary,
                 transform: [{ scale: latido }],
               },
             ]}
@@ -169,7 +172,7 @@ export default function Cronometro({ bottom = 84 }) {
               <Text style={styles.btnChicoTexto}>-15</Text>
             </Pressable>
             <Pressable
-              style={[styles.btnPrincipal, corriendo && { backgroundColor: '#475569' }]}
+              style={[styles.btnPrincipal, corriendo && { backgroundColor: t.textSecondary }]}
               onPress={alternar}
             >
               <Text style={styles.btnPrincipalTexto}>
@@ -212,31 +215,31 @@ export default function Cronometro({ bottom = 84 }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (t) => StyleSheet.create({
   fabWrap: { position: 'absolute', right: 20, width: 64, height: 64 },
   halo: { position: 'absolute', width: 64, height: 64, borderRadius: 32 },
   fab: {
     width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center',
-    elevation: 8, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 4 },
+    elevation: 8, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 4 },
   },
-  fabTexto: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
+  fabTexto: { color: t.onPrimary, fontSize: 14, fontWeight: '800' },
   panel: {
-    position: 'absolute', right: 20, width: 264, backgroundColor: '#1E293B', borderRadius: 22,
-    padding: 18, alignItems: 'center', borderWidth: 1, borderColor: '#334155', elevation: 10,
+    position: 'absolute', right: 20, width: 264, backgroundColor: t.surface, borderRadius: 24,
+    padding: 18, alignItems: 'center', borderWidth: 1, borderColor: t.border, elevation: 10,
   },
-  titulo: { color: '#94A3B8', fontSize: 12, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
+  titulo: { color: t.textSecondary, fontSize: 12, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
   tiempo: { fontSize: 56, fontWeight: '800', marginVertical: 6, fontVariant: ['tabular-nums'] },
-  pista: { width: '100%', height: 8, borderRadius: 4, backgroundColor: '#0F172A', overflow: 'hidden' },
+  pista: { width: '100%', height: 8, borderRadius: 4, backgroundColor: t.border, overflow: 'hidden' },
   barra: { height: '100%', borderRadius: 4 },
   presets: { flexDirection: 'row', gap: 8, marginTop: 14 },
-  chip: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 14, borderWidth: 1, borderColor: '#334155' },
-  chipActivo: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  chipTexto: { color: '#94A3B8', fontSize: 12, fontWeight: '600' },
-  chipTextoActivo: { color: '#FFFFFF' },
+  chip: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 14, borderWidth: 1, borderColor: t.border, backgroundColor: t.bg },
+  chipActivo: { backgroundColor: t.primary, borderColor: t.primary },
+  chipTexto: { color: t.textSecondary, fontSize: 12, fontWeight: '600' },
+  chipTextoActivo: { color: t.onPrimary },
   controles: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 16 },
-  btnChico: { backgroundColor: '#334155', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },
-  btnChicoTexto: { color: '#F8FAFC', fontWeight: '700', fontSize: 13 },
-  btnPrincipal: { backgroundColor: '#3B82F6', borderRadius: 14, paddingHorizontal: 22, paddingVertical: 12 },
-  btnPrincipalTexto: { color: '#FFFFFF', fontWeight: '800', fontSize: 15 },
-  reiniciar: { color: '#94A3B8', fontSize: 12 },
+  btnChico: { backgroundColor: t.bg, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },
+  btnChicoTexto: { color: t.textPrimary, fontWeight: '700', fontSize: 13 },
+  btnPrincipal: { backgroundColor: t.primary, borderRadius: 14, paddingHorizontal: 22, paddingVertical: 12 },
+  btnPrincipalTexto: { color: t.onPrimary, fontWeight: '800', fontSize: 15 },
+  reiniciar: { color: t.textSecondary, fontSize: 12 },
 });

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, ScrollView, FlatList, Image, Alert, StyleSheet, ActivityIndicator, Modal, Linking, TextInput, Vibration } from 'react-native';
 import { API_URL } from '../config';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppTheme } from '../theme/ThemeContext';
 import Cronometro from '../components/Cronometro';
 import EjercicioItem from '../components/EjercicioItem';
 import Contador from '../components/Contador';
@@ -17,6 +20,9 @@ const EJERCICIOS_LOCALES = [
 
 export default function BibliotecaScreen({ navigation, route }) {
   const { token } = route.params;
+  const t = useAppTheme();
+  const styles = makeStyles(t);
+  const insets = useSafeAreaInsets();
   const [ejercicios, setEjercicios] = useState(EJERCICIOS_LOCALES);
   const [grupo, setGrupo] = useState('TODOS');
   const [seleccionados, setSeleccionados] = useState([]);
@@ -214,7 +220,8 @@ const [detalle, setDetalle] = useState(null);
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+      <LinearGradient colors={t.gradient} style={StyleSheet.absoluteFill} />
       <View style={styles.card}>
         <View style={styles.headerRow}>
           <View>
@@ -242,7 +249,7 @@ const [detalle, setDetalle] = useState(null);
         </ScrollView>
 
         {cargando ? (
-          <ActivityIndicator size="large" color="#3B82F6" style={{ marginTop: 20 }} />
+          <ActivityIndicator size="large" color={t.primary} style={{ marginTop: 20 }} />
         ) : (
           <FlatList
             key={grupo}
@@ -322,11 +329,11 @@ const [detalle, setDetalle] = useState(null);
                       <Text style={styles.itemTitle}>{e.nombre}</Text>
                       <Text style={styles.itemDesc}>{e.descripcion}</Text>
                       <View style={{ flexDirection: 'row', gap: 6, marginTop: 6 }}>
-                        <TextInput style={styles.inputMini} placeholder="Series" placeholderTextColor="#64748B" keyboardType="numeric"
+                        <TextInput style={styles.inputMini} placeholder="Series" placeholderTextColor={t.textSecondary} keyboardType="numeric"
                           value={marcas[String(e.id)]?.series ?? ''} onChangeText={(v) => setMarca(String(e.id), 'series', v)} />
-                        <TextInput style={styles.inputMini} placeholder="Reps" placeholderTextColor="#64748B" keyboardType="numeric"
+                        <TextInput style={styles.inputMini} placeholder="Reps" placeholderTextColor={t.textSecondary} keyboardType="numeric"
                           value={marcas[String(e.id)]?.reps ?? ''} onChangeText={(v) => setMarca(String(e.id), 'reps', v)} />
-                        <TextInput style={styles.inputMini} placeholder="Kg" placeholderTextColor="#64748B" keyboardType="decimal-pad"
+                        <TextInput style={styles.inputMini} placeholder="Kg" placeholderTextColor={t.textSecondary} keyboardType="decimal-pad"
                           value={marcas[String(e.id)]?.kg ?? ''} onChangeText={(v) => setMarca(String(e.id), 'kg', v)} />
                       </View>
                       <View style={{ flexDirection: 'row', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
@@ -377,51 +384,50 @@ const [detalle, setDetalle] = useState(null);
 
 const SPOTIFY_URL = 'https://open.spotify.com/playlist/6ypUvnU30JFjyfzTzG5VBM';
 
-const styles = StyleSheet.create({
-  diaChip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: '#334155' },
-  diaChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  diaChipTexto: { color: '#94A3B8', fontSize: 13 },
-  diaChipTextoActive: { color: '#FFFFFF', fontWeight: '600' },
-  timerFab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, backgroundColor: '#3B82F6', alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 6 },
-  timerPanel: { position: 'absolute', bottom: 90, right: 20, backgroundColor: '#1E293B', borderRadius: 16, padding: 16, alignItems: 'center', elevation: 6 },
-  timerTexto: { color: '#F8FAFC', fontSize: 32, fontWeight: '700' },
-  timerBtnChico: { backgroundColor: '#334155', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
-  timerBtnChicoTexto: { color: '#F8FAFC', fontWeight: '600', fontSize: 13 },
-  inputMini: { flex: 1, backgroundColor: '#0F172A', color: '#F8FAFC', borderRadius: 12, borderWidth: 1, borderColor: '#334155', paddingHorizontal: 8, paddingVertical: 12, fontSize: 17, fontWeight: '700', textAlign: 'center' },
-  ultimaVez: { color: '#94A3B8', fontSize: 11, marginTop: 4 },
-  spotifyBtn: { backgroundColor: '#1DB954', borderRadius: 12, padding: 10, marginTop: 10, alignItems: 'center' },
-  modalFondo: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 10 },
-  modalCard: { backgroundColor: '#1E293B', borderRadius: 20, padding: 16 },
-  modalImg: { width: '100%', height: 320, borderRadius: 12, backgroundColor: '#fff' },
-  modalTitulo: { color: '#F8FAFC', fontSize: 22, fontWeight: 'bold', marginTop: 14 },
-  modalDesc: { color: '#94A3B8', fontSize: 14, marginTop: 6 },
-  modalBtn: { backgroundColor: '#3B82F6', borderRadius: 12, padding: 14, marginTop: 16, alignItems: 'center' },
-  modalBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+const makeStyles = (t) => StyleSheet.create({
+  diaChip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 16, borderWidth: 1, borderColor: t.border, backgroundColor: t.surface },
+  diaChipActive: { backgroundColor: t.primary, borderColor: t.primary },
+  diaChipTexto: { color: t.textSecondary, fontSize: 13 },
+  diaChipTextoActive: { color: t.onPrimary, fontWeight: '700' },
+  timerFab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, backgroundColor: t.primary, alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  timerPanel: { position: 'absolute', bottom: 90, right: 20, backgroundColor: t.surface, borderRadius: 20, padding: 16, alignItems: 'center', elevation: 6 },
+  timerTexto: { color: t.textPrimary, fontSize: 32, fontWeight: '700' },
+  timerBtnChico: { backgroundColor: t.bg, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
+  timerBtnChicoTexto: { color: t.textPrimary, fontWeight: '600', fontSize: 13 },
+  inputMini: { flex: 1, backgroundColor: t.surface, color: t.textPrimary, borderRadius: 12, borderWidth: 1, borderColor: t.border, paddingHorizontal: 8, paddingVertical: 12, fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  ultimaVez: { color: t.textSecondary, fontSize: 11, marginTop: 4 },
+  spotifyBtn: { backgroundColor: '#1DB954', borderRadius: 16, padding: 10, marginTop: 10, alignItems: 'center' },
+  modalFondo: { flex: 1, backgroundColor: 'rgba(20,32,30,0.55)', justifyContent: 'center', padding: 10 },
+  modalCard: { backgroundColor: t.surface, borderRadius: 28, padding: 16 },
+  modalImg: { width: '100%', height: 320, borderRadius: 16, backgroundColor: '#fff' },
+  modalTitulo: { color: t.textPrimary, fontSize: 22, fontWeight: '800', marginTop: 14 },
+  modalDesc: { color: t.textSecondary, fontSize: 14, marginTop: 6 },
+  modalBtn: { backgroundColor: t.primary, borderRadius: 16, padding: 14, marginTop: 16, alignItems: 'center' },
+  modalBtnText: { color: t.onPrimary, fontWeight: '800', fontSize: 15 },
   btnFila: { flexDirection: 'row', gap: 10, marginTop: 10 },
   btnFilaItem: { flex: 1, marginTop: 0, paddingVertical: 12 },
-  rutinaRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#0F172A', borderRadius: 14, padding: 10, marginBottom: 10 },
-  rutinaImg: { width: 56, height: 56, borderRadius: 10, backgroundColor: '#fff' },
-  rutinaQuitar: { color: '#F87171', fontSize: 18, fontWeight: 'bold', paddingHorizontal: 6 },
-
-  container: { flex: 1, backgroundColor: '#0F172A', padding: 16 },
-  card: { flex: 1, backgroundColor: '#1E293B', borderRadius: 12, borderWidth: 1, borderColor: '#334155', padding: 16 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  title: { color: '#F8FAFC', fontSize: 19, fontWeight: '700' },
-  subtitle: { color: '#94A3B8', fontSize: 12 },
-  saveBtn: { backgroundColor: '#3B82F6', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
-  saveBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '600' },
-  filters: { maxHeight: 40, marginBottom: 12 },
-  filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: '#334155', marginRight: 8, height: 32 },
-  filterChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  filterText: { color: '#94A3B8', fontSize: 13 },
-  filterTextActive: { color: '#FFFFFF', fontSize: 13, fontWeight: '600' },
-  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0F172A', padding: 10, borderRadius: 8, marginBottom: 8, gap: 12 },
-  thumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#1E3A8A', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  rutinaRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: t.bg, borderRadius: 20, padding: 10, marginBottom: 10 },
+  rutinaImg: { width: 56, height: 56, borderRadius: 14, backgroundColor: '#fff' },
+  rutinaQuitar: { color: t.danger, fontSize: 18, fontWeight: 'bold', paddingHorizontal: 6 },
+  container: { flex: 1, backgroundColor: t.bg, padding: 16 },
+  card: { flex: 1 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  title: { color: t.textPrimary, fontSize: 24, fontWeight: '800' },
+  subtitle: { color: t.textSecondary, fontSize: 13 },
+  saveBtn: { backgroundColor: t.coral, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 16 },
+  saveBtnText: { color: '#2B1710', fontSize: 13, fontWeight: '800' },
+  filters: { maxHeight: 44, marginBottom: 12 },
+  filterChip: { paddingHorizontal: 14, borderRadius: 20, borderWidth: 1, borderColor: t.border, backgroundColor: t.surface, marginRight: 8, height: 34, justifyContent: 'center' },
+  filterChipActive: { backgroundColor: t.primary, borderColor: t.primary },
+  filterText: { color: t.textSecondary, fontSize: 13, fontWeight: '600' },
+  filterTextActive: { color: t.onPrimary, fontSize: 13, fontWeight: '800' },
+  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: t.surface, padding: 12, borderRadius: 20, marginBottom: 10, gap: 12 },
+  thumb: { width: 56, height: 56, borderRadius: 14, backgroundColor: t.primaryBg, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
   img: { width: '100%', height: '100%' },
-  thumbFallback: { fontSize: 20 },
-  itemTitle: { color: '#F8FAFC', fontSize: 14, fontWeight: '600' },
-  itemDesc: { color: '#94A3B8', fontSize: 12, marginTop: 2 },
-  check: { width: 24, height: 24, borderRadius: 6, borderWidth: 1, borderColor: '#334155', justifyContent: 'center', alignItems: 'center' },
-  checkActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  checkText: { color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' },
+  thumbFallback: { fontSize: 22 },
+  itemTitle: { color: t.textPrimary, fontSize: 15, fontWeight: '700' },
+  itemDesc: { color: t.textSecondary, fontSize: 12, marginTop: 2 },
+  check: { width: 26, height: 26, borderRadius: 8, borderWidth: 1, borderColor: t.border, justifyContent: 'center', alignItems: 'center' },
+  checkActive: { backgroundColor: t.primary, borderColor: t.primary },
+  checkText: { color: t.onPrimary, fontSize: 12, fontWeight: 'bold' },
 });

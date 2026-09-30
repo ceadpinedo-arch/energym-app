@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Image, Pressable, Animated, Easing, StyleSheet } from 'react-native';
+import { useAppTheme } from '../theme/ThemeContext';
 
 export default function EjercicioItem({ item, index, activo, onOpen, onToggle }) {
+  const t = useAppTheme();
+  const styles = makeStyles(t);
   const entrada = useRef(new Animated.Value(0)).current;
   const escala = useRef(new Animated.Value(1)).current;
   const marca = useRef(new Animated.Value(activo ? 1 : 0)).current;
@@ -74,15 +77,18 @@ export default function EjercicioItem({ item, index, activo, onOpen, onToggle })
   );
 }
 
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0F172A', padding: 10, borderRadius: 8, marginBottom: 8, gap: 12 },
-  thumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#1E3A8A', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+const makeStyles = (t) => StyleSheet.create({
+  row: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: t.surface, padding: 12, borderRadius: 20, marginBottom: 10, gap: 12,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2,
+  },
+  thumb: { width: 56, height: 56, borderRadius: 14, backgroundColor: t.primaryBg, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
   img: { width: '100%', height: '100%' },
-  thumbFallback: { fontSize: 20 },
-  itemTitle: { color: '#F8FAFC', fontSize: 14, fontWeight: '600' },
-  itemDesc: { color: '#94A3B8', fontSize: 12, marginTop: 2 },
-  check: { width: 24, height: 24, borderRadius: 6, borderWidth: 1, borderColor: '#334155', justifyContent: 'center', alignItems: 'center' },
-  relleno: { position: 'absolute', top: -1, left: -1, right: -1, bottom: -1, borderRadius: 6, backgroundColor: '#3B82F6' },
-  checkText: { color: '#FFFFFF', fontSize: 13, fontWeight: 'bold' },
-  borde: { ...StyleSheet.absoluteFillObject, borderWidth: 1.5, borderColor: '#3B82F6', borderRadius: 8 },
+  thumbFallback: { fontSize: 22 },
+  itemTitle: { color: t.textPrimary, fontSize: 15, fontWeight: '700' },
+  itemDesc: { color: t.textSecondary, fontSize: 12, marginTop: 2 },
+  check: { width: 26, height: 26, borderRadius: 8, borderWidth: 1, borderColor: t.border, justifyContent: 'center', alignItems: 'center' },
+  relleno: { position: 'absolute', top: -1, left: -1, right: -1, bottom: -1, borderRadius: 8, backgroundColor: t.primary },
+  checkText: { color: t.onPrimary, fontSize: 13, fontWeight: 'bold' },
+  borde: { ...StyleSheet.absoluteFillObject, borderWidth: 1.5, borderColor: t.primary, borderRadius: 20 },
 });
