@@ -6,7 +6,13 @@
       }
     },
     "android": {
-      "package": "com.kiyann.energymapp"
+      "package": "ar.com.tuaccesogym.app",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ECFDF5"
+      }
     },
     "plugins": [
       "expo-font",
@@ -14,9 +20,23 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Energym necesita la c\u00e1mara para escanear el QR de acceso al gimnasio."
+          "cameraPermission": "TuAccesoGym necesita la cámara para escanear el QR de acceso al gimnasio."
+        }
+      ],
+      "expo-notifications",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ECFDF5"
         }
       ]
-    ]
+    ],
+    "name": "TuAccesoGym",
+    "version": "1.0.0",
+    "slug": "energym-app",
+    "icon": "./assets/icon.png"
   }
 }

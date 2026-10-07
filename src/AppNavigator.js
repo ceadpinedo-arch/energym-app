@@ -16,6 +16,7 @@ import AparienciaScreen from './screens/AparienciaScreen';
 import DatosGimnasioScreen from './screens/DatosGimnasioScreen';
 import { ThemeProvider } from './theme/ThemeContext';
 import QRAccesoScreen from './screens/QRAccesoScreen';
+import CambiarClaveScreen from './screens/CambiarClaveScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,7 @@ export default function AppNavigator() {
             <Stack.Screen name="Apariencia" component={AparienciaScreen} />
             <Stack.Screen name="DatosGimnasio" component={DatosGimnasioScreen} />
             <Stack.Screen name="QRAcceso" component={QRAccesoScreen} />
+            <Stack.Screen name="CambiarClave" component={CambiarClaveScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </ThemeProvider>

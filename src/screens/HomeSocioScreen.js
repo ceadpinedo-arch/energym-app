@@ -87,6 +87,7 @@ export default function HomeSocioScreen({ navigation, route }) {
   const [estado, setEstado] = useState(usuario);
   const [stats, setStats] = useState({ visitasMes: 0, racha: 0, entroHoy: false });
   const [pagando, setPagando] = useState(false);
+  const [mpListo, setMpListo] = useState(false);
   const [contacto, setContacto] = useState({ whatsapp: '', instagram: '', alias: '', cbu: '' });
 
   useEffect(() => {
@@ -102,6 +103,13 @@ export default function HomeSocioScreen({ navigation, route }) {
     fetch(`${API_URL}/api/gimnasio/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => res.json())
       .then((g) => setContacto({ whatsapp: g.whatsapp || '', instagram: g.instagram || '', alias: g.alias || '', cbu: g.cbu || '' }))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch(API_URL + '/api/mp/disponible', { headers: { Authorization: 'Bearer ' + token } })
+      .then((res) => res.json())
+      .then((d) => setMpListo(!!(d && d.conectado)))
       .catch(() => {});
   }, []);
 
@@ -233,6 +241,7 @@ export default function HomeSocioScreen({ navigation, route }) {
           </Text>
         </Pressable>
 
+        {mpListo ? (
         <Pressable
           onPress={pagarCuota}
           disabled={pagando}
@@ -242,6 +251,7 @@ export default function HomeSocioScreen({ navigation, route }) {
             {pagando ? 'Generando link…' : 'Pagar cuota'}
           </Text>
         </Pressable>
+        ) : null}
 
         {(contacto.alias || contacto.cbu) ? (
           <View style={[styles.card, { backgroundColor: t.surface }]}>
@@ -262,6 +272,7 @@ export default function HomeSocioScreen({ navigation, route }) {
           {contacto.whatsapp ? <Atajo t={t} emoji="💬" label="WhatsApp" onPress={() => Linking.openURL(`https://wa.me/${contacto.whatsapp}?text=Hola!`)} /> : null}
           {contacto.instagram ? <Atajo t={t} emoji="📸" label="Instagram" onPress={() => Linking.openURL(`https://instagram.com/${contacto.instagram}`)} /> : null}
           <Atajo t={t} emoji="🎨" label="Apariencia" onPress={() => navigation.navigate('Apariencia', { token })} />
+          <Atajo t={t} emoji="🔑" label="Cambiar contraseña" onPress={() => navigation.navigate('CambiarClave', { token })} />
         </View>
       </ScrollView>
     </LinearGradient>

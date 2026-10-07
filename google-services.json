@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "328487449137",
+    "project_id": "tuaccesogym",
+    "storage_bucket": "tuaccesogym.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328487449137:android:ad105adc252669efb01b10",
+        "android_client_info": {
+          "package_name": "ar.com.tuaccesogym.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbeDoDfaNFh0ZoE1YJm9x8dn6jhz-__BE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

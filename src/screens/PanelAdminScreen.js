@@ -65,6 +65,7 @@ export default function PanelAdminScreen({ navigation, route }) {
         <QuickLink t={t} label="Biblioteca de ejercicios" onPress={() => navigation.navigate('Biblioteca', { token, admin: true })} />
         <QuickLink t={t} label="Dar de alta un socio" onPress={() => navigation.navigate('AltaSocio', { token })} />
       <QuickLink t={t} label="Datos del gimnasio" onPress={() => navigation.navigate('DatosGimnasio', { token })} />
+      <QuickLink t={t} label="Cambiar mi contraseña" onPress={() => navigation.navigate('CambiarClave', { token })} />
       </View>
     </ScrollView>
   );
