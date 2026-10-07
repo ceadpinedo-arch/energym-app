@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Linking } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -88,6 +88,7 @@ export default function HomeSocioScreen({ navigation, route }) {
   const [stats, setStats] = useState({ visitasMes: 0, racha: 0, entroHoy: false });
   const [pagando, setPagando] = useState(false);
   const [mpListo, setMpListo] = useState(false);
+  const [gimnasio, setGimnasio] = useState({ nombre: '', logoUrl: '' });
   const [contacto, setContacto] = useState({ whatsapp: '', instagram: '', alias: '', cbu: '' });
 
   useEffect(() => {
@@ -102,7 +103,10 @@ export default function HomeSocioScreen({ navigation, route }) {
   useEffect(() => {
     fetch(`${API_URL}/api/gimnasio/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => res.json())
-      .then((g) => setContacto({ whatsapp: g.whatsapp || '', instagram: g.instagram || '', alias: g.alias || '', cbu: g.cbu || '' }))
+      .then((g) => {
+        setContacto({ whatsapp: g.whatsapp || '', instagram: g.instagram || '', alias: g.alias || '', cbu: g.cbu || '' });
+        setGimnasio({ nombre: g.nombre || '', logoUrl: g.logoUrl || '' });
+      })
       .catch(() => {});
   }, []);
 
@@ -169,11 +173,11 @@ export default function HomeSocioScreen({ navigation, route }) {
         <View style={styles.header}>
           <View style={{ flex: 1 }}>
             <Text style={[styles.hello, { color: t.textPrimary }]}>Hola, {estado.nombre.split(' ')[0]} 👋</Text>
-            <Text style={{ color: t.textSecondary, fontSize: 13 }}>Listo para entrenar</Text>
+            <Text style={{ color: t.textSecondary, fontSize: 13 }}>{gimnasio.nombre ? gimnasio.nombre + ' · ' : ''}Listo para entrenar</Text>
           </View>
-          <View style={[styles.avatar, { backgroundColor: t.surface }]}>
-            <Text style={{ color: t.primary, fontWeight: '800' }}>{iniciales}</Text>
-          </View>
+          {gimnasio.logoUrl ? (
+            <Image source={{ uri: gimnasio.logoUrl }} style={{ width: 64, height: 64, borderRadius: 18, backgroundColor: t.surface }} resizeMode="contain" />
+          ) : null}
         </View>
 
         <View style={[styles.card, { backgroundColor: t.surface }]}>
