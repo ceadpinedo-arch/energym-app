@@ -7,16 +7,38 @@ import {
   Pressable,
   StyleSheet,
   useColorScheme,
+  Platform,
 } from 'react-native';
 import { getTheme } from '../theme/colors';
 import { API_URL } from '../config';
 
+
+(async () => {
+  try {
+    const Notifications = await import('expo-notifications');
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+  } catch (e) {}
+})();
 
 async function registrarPush(token, apiUrl) {
   try {
     const Device = await import('expo-device');
     const Notifications = await import('expo-notifications');
     if (!Device.isDevice) return;
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Avisos del gimnasio',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+      });
+    }
     const { status: existente } = await Notifications.getPermissionsAsync();
     let status = existente;
     if (status !== 'granted') {
@@ -84,7 +106,7 @@ export default function LoginScreen({ navigation }) {
               <Text style={{ color: t.primary, fontSize: 20 }}>⚡</Text>
             </View>
             <View>
-              <Text style={[styles.logoText, { color: t.textPrimary }]}>Energym</Text>
+              <Text style={[styles.logoText, { color: t.textPrimary }]}>TuAccesoGym</Text>
               <Text style={[styles.tagline, { color: t.textSecondary }]}>
                 Sumá energía a tu rutina
               </Text>
@@ -126,7 +148,7 @@ export default function LoginScreen({ navigation }) {
         <TextInput
           value={dni}
           onChangeText={setDni}
-          placeholder={modo === 'SOCIO' ? '30123456' : 'admin.energym'}
+          placeholder={modo === 'SOCIO' ? '30123456' : 'usuario admin'}
           placeholderTextColor={t.textSecondary}
           style={[styles.input, { borderColor: t.border, color: t.textPrimary }]}
           keyboardType={modo === 'SOCIO' ? 'number-pad' : 'default'}

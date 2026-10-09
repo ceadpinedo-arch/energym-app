@@ -20,6 +20,13 @@ const EJERCICIOS_LOCALES = [
 
 export default function BibliotecaScreen({ navigation, route }) {
   const { token } = route.params;
+  const [spotifyUrl, setSpotifyUrl] = useState('');
+  useEffect(() => {
+    fetch(API_URL + '/api/gimnasio/me', { headers: { Authorization: 'Bearer ' + token } })
+      .then((res) => res.json())
+      .then((g) => setSpotifyUrl((g && g.spotifyUrl) || ''))
+      .catch(() => {});
+  }, []);
   const t = useAppTheme();
   const styles = makeStyles(t);
   const insets = useSafeAreaInsets();
@@ -130,7 +137,7 @@ const [detalle, setDetalle] = useState(null);
   const cargarEjercicios = async () => {
     setCargando(true);
     try {
-      const res = await fetch(`${API_URL}/api/rutinas`, {
+      const res = await fetch(`${API_URL}/api/ejercicios`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -280,6 +287,11 @@ const [detalle, setDetalle] = useState(null);
                 />
                 <Text style={styles.modalTitulo}>{detalle.nombre}</Text>
                 <Text style={styles.modalDesc}>{detalle.descripcion}</Text>
+                {detalle.videoUrl ? (
+                  <Pressable style={[styles.modalBtn, { backgroundColor: t.coral }]} onPress={() => Linking.openURL(detalle.videoUrl)}>
+                    <Text style={[styles.modalBtnText, { color: '#2B1710' }]}>Ver video</Text>
+                  </Pressable>
+                ) : null}
                 <Pressable
                   style={styles.modalBtn}
                   onPress={() => { toggle(String(detalle.id)); setDetalle(null); }}
@@ -310,7 +322,7 @@ const [detalle, setDetalle] = useState(null);
                 </Pressable>
               ))}
             </ScrollView>
-            <ScrollView style={{ marginTop: 12 }}>
+            <ScrollView style={{ marginTop: 12, flexShrink: 1 }}>
               {ejercicios.filter((e) => {
                 if (!seleccionados.includes(String(e.id))) return false;
                 if (diaFiltro === 'TODOS') return true;
@@ -320,23 +332,45 @@ const [detalle, setDetalle] = useState(null);
                 const uri = e.imagenUrl || e.imagen || e.uri || e.url;
                 return (
                   <View key={String(e.id)} style={styles.rutinaRow}>
-                    {uri ? (
-                      <Image source={{ uri }} style={styles.rutinaImg} resizeMode="cover" />
-                    ) : (
-                      <View style={styles.rutinaImg} />
-                    )}
+                    <View style={styles.rutinaTop}>
+                    <View style={styles.rutinaImgWrap}>
+                      {uri ? (
+                        <Image source={{ uri }} style={styles.rutinaImg} resizeMode="cover" />
+                      ) : (
+                        <View style={[styles.rutinaImg, { alignItems: 'center', justifyContent: 'center' }]}><Text style={{ fontSize: 30 }}>💪</Text></View>
+                      )}
+                      {e.videoUrl ? (
+                        <Pressable style={styles.verBtn} onPress={() => Linking.openURL(e.videoUrl)}>
+                          <Text style={styles.verBtnTexto}>▶ Ver</Text>
+                        </Pressable>
+                      ) : null}
+                    </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.itemTitle}>{e.nombre}</Text>
                       <Text style={styles.itemDesc}>{e.descripcion}</Text>
-                      <View style={{ flexDirection: 'row', gap: 6, marginTop: 6 }}>
-                        <TextInput style={styles.inputMini} placeholder="Series" placeholderTextColor={t.textSecondary} keyboardType="numeric"
-                          value={marcas[String(e.id)]?.series ?? ''} onChangeText={(v) => setMarca(String(e.id), 'series', v)} />
-                        <TextInput style={styles.inputMini} placeholder="Reps" placeholderTextColor={t.textSecondary} keyboardType="numeric"
-                          value={marcas[String(e.id)]?.reps ?? ''} onChangeText={(v) => setMarca(String(e.id), 'reps', v)} />
-                        <TextInput style={styles.inputMini} placeholder="Kg" placeholderTextColor={t.textSecondary} keyboardType="decimal-pad"
-                          value={marcas[String(e.id)]?.kg ?? ''} onChangeText={(v) => setMarca(String(e.id), 'kg', v)} />
+                    </View>
+                    <Pressable onPress={() => toggle(String(e.id))} hitSlop={10}>
+                      <Text style={styles.rutinaQuitar}>✕</Text>
+                    </Pressable>
+                    </View>
+                      <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+                        <View style={styles.chipCampo}>
+                          <Text style={styles.chipLabel} numberOfLines={1}>Series</Text>
+                          <TextInput style={styles.chipInput} placeholder="0" placeholderTextColor={t.onPrimary} keyboardType="numeric"
+                            value={marcas[String(e.id)]?.series ?? ''} onChangeText={(v) => setMarca(String(e.id), 'series', v)} />
+                        </View>
+                        <View style={styles.chipCampo}>
+                          <Text style={styles.chipLabel} numberOfLines={1} adjustsFontSizeToFit>Repeticiones</Text>
+                          <TextInput style={styles.chipInput} placeholder="0" placeholderTextColor={t.onPrimary} keyboardType="numeric"
+                            value={marcas[String(e.id)]?.reps ?? ''} onChangeText={(v) => setMarca(String(e.id), 'reps', v)} />
+                        </View>
+                        <View style={styles.chipCampo}>
+                          <Text style={styles.chipLabel} numberOfLines={1}>Kg</Text>
+                          <TextInput style={styles.chipInput} placeholder="0" placeholderTextColor={t.onPrimary} keyboardType="decimal-pad"
+                            value={marcas[String(e.id)]?.kg ?? ''} onChangeText={(v) => setMarca(String(e.id), 'kg', v)} />
+                        </View>
                       </View>
-                      <View style={{ flexDirection: 'row', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                      <View style={{ flexDirection: 'row', gap: 6, marginTop: 8 }}>
                         {DIAS.map((d) => (
                           <Pressable
                             key={d}
@@ -352,17 +386,10 @@ const [detalle, setDetalle] = useState(null);
                           Última vez: {ultimos[String(e.id)].series}x{ultimos[String(e.id)].repeticiones} con {ultimos[String(e.id)].peso} kg
                         </Text>
                       ) : null}
-                    </View>
-                    <Pressable onPress={() => toggle(String(e.id))} hitSlop={10}>
-                      <Text style={styles.rutinaQuitar}>✕</Text>
-                    </Pressable>
                   </View>
                 );
               })}
             </ScrollView>
-            <Pressable style={styles.spotifyBtn} onPress={() => Linking.openURL(SPOTIFY_URL)}>
-              <Text style={styles.modalBtnText}>Escuchar en Spotify</Text>
-            </Pressable>
             <View style={styles.btnFila}>
           <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={guardarEntreno}>
             <Text style={styles.modalBtnText}>Guardar entreno</Text>
@@ -382,10 +409,9 @@ const [detalle, setDetalle] = useState(null);
     );
 }
 
-const SPOTIFY_URL = 'https://open.spotify.com/playlist/6ypUvnU30JFjyfzTzG5VBM';
 
 const makeStyles = (t) => StyleSheet.create({
-  diaChip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 16, borderWidth: 1, borderColor: t.border, backgroundColor: t.surface },
+  diaChip: { flex: 1, alignItems: 'center', paddingHorizontal: 6, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: t.border, backgroundColor: t.surface },
   diaChipActive: { backgroundColor: t.primary, borderColor: t.primary },
   diaChipTexto: { color: t.textSecondary, fontSize: 13 },
   diaChipTextoActive: { color: t.onPrimary, fontWeight: '700' },
@@ -406,8 +432,15 @@ const makeStyles = (t) => StyleSheet.create({
   modalBtnText: { color: t.onPrimary, fontWeight: '800', fontSize: 15 },
   btnFila: { flexDirection: 'row', gap: 10, marginTop: 10 },
   btnFilaItem: { flex: 1, marginTop: 0, paddingVertical: 12 },
-  rutinaRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: t.bg, borderRadius: 20, padding: 10, marginBottom: 10 },
-  rutinaImg: { width: 56, height: 56, borderRadius: 14, backgroundColor: '#fff' },
+  rutinaRow: { backgroundColor: t.bg, borderRadius: 20, padding: 12, marginBottom: 10 },
+  rutinaTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rutinaImg: { width: 88, height: 88, borderRadius: 18, backgroundColor: '#fff' },
+  rutinaImgWrap: { width: 88, height: 88 },
+  verBtn: { position: 'absolute', bottom: 4, left: 4, right: 4, backgroundColor: t.primary, borderRadius: 10, paddingVertical: 3, alignItems: 'center' },
+  verBtnTexto: { color: t.onPrimary, fontSize: 11, fontWeight: '800' },
+  chipCampo: { flex: 1, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: t.border },
+  chipLabel: { backgroundColor: t.surface, color: t.textSecondary, fontSize: 10, fontWeight: '700', textAlign: 'center', paddingVertical: 4 },
+  chipInput: { backgroundColor: t.primary, color: t.onPrimary, fontSize: 18, fontWeight: '800', textAlign: 'center', paddingVertical: 6 },
   rutinaQuitar: { color: t.danger, fontSize: 18, fontWeight: 'bold', paddingHorizontal: 6 },
   container: { flex: 1, backgroundColor: t.bg, padding: 16 },
   card: { flex: 1 },

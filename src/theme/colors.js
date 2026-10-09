@@ -47,8 +47,30 @@ export const accents = {
   celeste: { light: '#0B6FA8', dark: '#7FD1FF' },
 };
 
-export function getTheme(isDark, accentKey = 'menta') {
+export const estilos = {
+  menta: { label: 'Menta' },
+  oscuro: { label: 'Noche' },
+  minimal: { label: 'Minimal' },
+  colorido: { label: 'Colorido' },
+};
+
+export function getTheme(isDark, accentKey = 'menta', estiloKey = 'menta') {
   const base = isDark ? dark : light;
   const accent = accents[accentKey] || accents.menta;
-  return { ...base, primary: isDark ? accent.dark : accent.light };
+  const primary = isDark ? accent.dark : accent.light;
+  const t = { ...base, primary };
+  if (estiloKey === 'oscuro') {
+    return { ...t, gradient: ['#0B1210', accent.dark + '33'] };
+  }
+  if (estiloKey === 'minimal') {
+    return isDark
+      ? { ...t, bg: '#0E0E0E', surface: '#181818', border: '#2A2A2A', gradient: ['#0E0E0E', '#0E0E0E'], primaryBg: '#242424' }
+      : { ...t, bg: '#F6F6F6', surface: '#FFFFFF', border: '#E4E4E4', gradient: ['#F6F6F6', '#F6F6F6'], primaryBg: '#EDEDED' };
+  }
+  if (estiloKey === 'colorido') {
+    return isDark
+      ? { ...t, gradient: [accent.dark + '55', '#FF9E8255'] }
+      : { ...t, gradient: [accent.light + '55', '#F08A6C55'] };
+  }
+  return t;
 }

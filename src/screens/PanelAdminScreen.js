@@ -35,7 +35,7 @@ export default function PanelAdminScreen({ navigation, route }) {
       <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]}>
         <View style={styles.headerRow}>
           <Text style={{ color: t.textPrimary, fontSize: 19, fontWeight: '700' }}>Panel admin</Text>
-          <Text style={{ color: t.textSecondary, fontSize: 12 }}>Energym</Text>
+          <Text style={{ color: t.textSecondary, fontSize: 12 }}>TuAccesoGym</Text>
         </View>
 
         <View style={styles.statsRow}>

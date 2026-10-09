@@ -7,7 +7,6 @@ import Svg, { Circle } from 'react-native-svg';
 import { API_URL } from '../config';
 import { useAppTheme } from '../theme/ThemeContext';
 
-const SPOTIFY_URL = 'https://open.spotify.com/playlist/6ypUvnU30JFjyfzTzG5VBM';
 const META_VISITAS = 12;
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
@@ -88,7 +87,7 @@ export default function HomeSocioScreen({ navigation, route }) {
   const [stats, setStats] = useState({ visitasMes: 0, racha: 0, entroHoy: false });
   const [pagando, setPagando] = useState(false);
   const [mpListo, setMpListo] = useState(false);
-  const [gimnasio, setGimnasio] = useState({ nombre: '', logoUrl: '' });
+  const [gimnasio, setGimnasio] = useState({ nombre: '', logoUrl: '', spotifyUrl: '' });
   const [contacto, setContacto] = useState({ whatsapp: '', instagram: '', alias: '', cbu: '' });
 
   useEffect(() => {
@@ -105,7 +104,7 @@ export default function HomeSocioScreen({ navigation, route }) {
       .then((res) => res.json())
       .then((g) => {
         setContacto({ whatsapp: g.whatsapp || '', instagram: g.instagram || '', alias: g.alias || '', cbu: g.cbu || '' });
-        setGimnasio({ nombre: g.nombre || '', logoUrl: g.logoUrl || '' });
+        setGimnasio({ nombre: g.nombre || '', logoUrl: g.logoUrl || '', spotifyUrl: g.spotifyUrl || '' });
       })
       .catch(() => {});
   }, []);
@@ -272,7 +271,7 @@ export default function HomeSocioScreen({ navigation, route }) {
           <Atajo t={t} emoji="📷" label="Escanear QR" onPress={() => navigation.navigate('QRAcceso', { token })} />
           <Atajo t={t} emoji="🤖" label="Asistente IA" onPress={() => navigation.navigate('AsistenteIA', { token })} />
           <Atajo t={t} emoji="🧾" label="Historial de pagos" onPress={() => navigation.navigate('HistorialPagos', { token })} />
-          <Atajo t={t} emoji="🎵" label="Spotify" onPress={() => Linking.openURL(SPOTIFY_URL)} />
+          {gimnasio.spotifyUrl ? <Atajo t={t} emoji="🎵" label="Spotify" onPress={() => Linking.openURL(gimnasio.spotifyUrl)} /> : null}
           {contacto.whatsapp ? <Atajo t={t} emoji="💬" label="WhatsApp" onPress={() => Linking.openURL(`https://wa.me/${contacto.whatsapp}?text=Hola!`)} /> : null}
           {contacto.instagram ? <Atajo t={t} emoji="📸" label="Instagram" onPress={() => Linking.openURL(`https://instagram.com/${contacto.instagram}`)} /> : null}
           <Atajo t={t} emoji="🎨" label="Apariencia" onPress={() => navigation.navigate('Apariencia', { token })} />

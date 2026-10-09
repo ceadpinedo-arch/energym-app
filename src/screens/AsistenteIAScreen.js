@@ -32,7 +32,7 @@ export default function AsistenteIAScreen({ route }) {
   const teclado = useTeclado();
 
   const [mensajes, setMensajes] = useState([
-    { role: 'assistant', content: '¡Hola! Soy el asistente de Energym. ¿En qué te puedo ayudar hoy?' },
+    { role: 'assistant', content: '¡Hola! Soy el asistente de TuAccesoGym. ¿En qué te puedo ayudar hoy?' },
   ]);
   const [texto, setTexto] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -76,7 +76,7 @@ export default function AsistenteIAScreen({ route }) {
       <View style={{ flex: 1, padding: 16, paddingBottom: teclado > 0 ? teclado + 8 : 72 }}>
         <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border, flex: 1 }]}>
           <Text style={{ color: t.textPrimary, fontSize: 19, fontWeight: '700', marginBottom: 12 }}>
-            Asistente Energym
+            Asistente TuAccesoGym
           </Text>
 
           <FlatList
