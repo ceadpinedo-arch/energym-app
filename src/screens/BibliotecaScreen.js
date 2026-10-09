@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, FlatList, Image, Alert, StyleSheet, ActivityIndicator, Modal, Linking, TextInput, Vibration } from 'react-native';
+import { View, Text, Pressable, ScrollView, FlatList, Image, Alert, StyleSheet, ActivityIndicator, Modal, Linking, TextInput, Vibration, Keyboard } from 'react-native';
 import { API_URL } from '../config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -62,6 +62,12 @@ const [detalle, setDetalle] = useState(null);
   const DIAS = ['Día A', 'Día B', 'Día C'];
   const [diaFiltro, setDiaFiltro] = useState('TODOS');
   const [ultimos, setUltimos] = useState({});
+  const [tecladoAlto, setTecladoAlto] = useState(0);
+  useEffect(() => {
+    const a = Keyboard.addListener('keyboardDidShow', (ev) => setTecladoAlto(ev.endCoordinates.height));
+    const b = Keyboard.addListener('keyboardDidHide', () => setTecladoAlto(0));
+    return () => { a.remove(); b.remove(); };
+  }, []);
 
   const setMarca = (id, campo, v) =>
     setMarcas((prev) => ({ ...prev, [id]: { ...prev[id], [campo]: v } }));
@@ -97,7 +103,12 @@ const [detalle, setDetalle] = useState(null);
       });
       if (res.ok) {
         Alert.alert('¡Listo!', 'Entrenamiento guardado.');
-        setMarcas({});
+        setMarcas((prev) => {
+          const n2 = {};
+          Object.keys(prev).forEach((k) => { n2[k] = { ...prev[k], kg: '' }; });
+          return n2;
+        });
+        guardarPlan();
         cargarUltimos();
       } else {
         Alert.alert('Error', 'No se pudo guardar el entrenamiento.');
@@ -126,7 +137,7 @@ const [detalle, setDetalle] = useState(null);
           const next = { ...prev };
           data.items.forEach((it) => {
             const id = String(it.ejercicioId);
-            next[id] = { ...next[id], dia: it.dia || null };
+            next[id] = { ...next[id], dia: it.dia || null, series: it.series != null ? String(it.series) : '', reps: it.repeticiones || '' };
           });
           return next;
         });
@@ -160,6 +171,22 @@ const [detalle, setDetalle] = useState(null);
     );
   };
 
+  const guardarPlan = async () => {
+    try {
+      const items = seleccionados.map((ejercicioId) => ({
+        ejercicioId,
+        dia: marcas[ejercicioId]?.dia || null,
+        series: Math.min(50, parseInt(marcas[ejercicioId]?.series, 10) || 4),
+        repeticiones: String(marcas[ejercicioId]?.reps || '10-12').slice(0, 20),
+      }));
+      await fetch(API_URL + '/api/rutinas/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ items }),
+      });
+    } catch (e) {}
+  };
+
   const abrirRutina = async () => {
     if (seleccionados.length === 0) {
       Alert.alert('Atención', 'Seleccioná al menos un ejercicio para tu rutina.');
@@ -171,6 +198,8 @@ const [detalle, setDetalle] = useState(null);
       const items = seleccionados.map((ejercicioId) => ({
       ejercicioId,
       dia: marcas[ejercicioId]?.dia || null,
+      series: Math.min(50, parseInt(marcas[ejercicioId]?.series, 10) || 4),
+      repeticiones: String(marcas[ejercicioId]?.reps || '10-12').slice(0, 20),
     }));
       await fetch(`${API_URL}/api/rutinas/me`, {
         method: 'PUT',
@@ -200,6 +229,8 @@ const [detalle, setDetalle] = useState(null);
       const items = seleccionados.map((ejercicioId) => ({
       ejercicioId,
       dia: marcas[ejercicioId]?.dia || null,
+      series: Math.min(50, parseInt(marcas[ejercicioId]?.series, 10) || 4),
+      repeticiones: String(marcas[ejercicioId]?.reps || '10-12').slice(0, 20),
     }));
       await fetch(`${API_URL}/api/rutinas/me`, {
         method: 'PUT',
@@ -306,7 +337,7 @@ const [detalle, setDetalle] = useState(null);
         </Pressable>
       </Modal>
 
-      <Modal visible={rutinaVisible} transparent animationType="slide" onRequestClose={() => setRutinaVisible(false)}>
+      <Modal visible={rutinaVisible} transparent animationType="slide" onRequestClose={() => { guardarPlan(); setRutinaVisible(false); }}>
         <View style={styles.modalFondo}>
           <View style={[styles.modalCard, { maxHeight: '94%' }]}>
             <Text style={styles.modalTitulo}>Mi rutina</Text>
@@ -322,7 +353,7 @@ const [detalle, setDetalle] = useState(null);
                 </Pressable>
               ))}
             </ScrollView>
-            <ScrollView style={{ marginTop: 12, flexShrink: 1 }}>
+            <ScrollView style={{ marginTop: 12, flexShrink: 1 }} contentContainerStyle={{ paddingBottom: 40 + tecladoAlto }} keyboardShouldPersistTaps="handled">
               {ejercicios.filter((e) => {
                 if (!seleccionados.includes(String(e.id))) return false;
                 if (diaFiltro === 'TODOS') return true;
@@ -394,7 +425,7 @@ const [detalle, setDetalle] = useState(null);
           <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={guardarEntreno}>
             <Text style={styles.modalBtnText}>Guardar entreno</Text>
           </Pressable>
-          <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={() => setRutinaVisible(false)}>
+          <Pressable style={[styles.modalBtn, styles.btnFilaItem]} onPress={() => { guardarPlan(); setRutinaVisible(false); }}>
             <Text style={styles.modalBtnText}>Listo</Text>
           </Pressable>
         </View>

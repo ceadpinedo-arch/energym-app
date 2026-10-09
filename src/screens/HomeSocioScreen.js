@@ -268,6 +268,7 @@ export default function HomeSocioScreen({ navigation, route }) {
         <Text style={{ color: t.textSecondary, fontSize: 13, fontWeight: '600', marginVertical: 8 }}>Accesos rápidos</Text>
         <View style={styles.grid}>
           <Atajo t={t} emoji="🏋️" label="Mi rutina de hoy" onPress={() => navigation.navigate('Biblioteca', { token })} />
+          <Atajo t={t} emoji="📈" label="Mi progreso" onPress={() => navigation.navigate('Progreso', { token })} />
           <Atajo t={t} emoji="📷" label="Escanear QR" onPress={() => navigation.navigate('QRAcceso', { token })} />
           <Atajo t={t} emoji="🤖" label="Asistente IA" onPress={() => navigation.navigate('AsistenteIA', { token })} />
           <Atajo t={t} emoji="🧾" label="Historial de pagos" onPress={() => navigation.navigate('HistorialPagos', { token })} />
