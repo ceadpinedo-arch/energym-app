@@ -42,7 +42,7 @@ async function registrarPush(token, apiUrl) {
     const { status: existente } = await Notifications.getPermissionsAsync();
     let status = existente;
     if (status !== 'granted') {
-      const req = await Notifications.requestPermissionsAsync();
+      const req = (/*WEBSKIP*/ require('react-native').Platform.OS === 'web' ? { status: 'denied', granted: false } : await Notifications.requestPermissionsAsync());
       status = req.status;
     }
     if (status !== 'granted') return;

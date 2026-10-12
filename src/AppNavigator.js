@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -20,12 +21,15 @@ import CambiarClaveScreen from './screens/CambiarClaveScreen';
 import ProgresoScreen from './screens/ProgresoScreen';
 
 const Stack = createNativeStackNavigator();
+const WEBNAV = Platform.OS === 'web';
+const RAIZ = ['Login', 'HomeSocio', 'PanelAdmin'];
+const TIT = { Biblioteca: 'Biblioteca', AsistenteIA: 'Asistente IA', HistorialPagos: 'Historial de pagos', ListaSocios: 'Socios', PagoEfectivo: 'Pago en efectivo', AltaSocio: 'Nuevo socio', DetalleSocio: 'Detalle del socio', Apariencia: 'Apariencia', DatosGimnasio: 'Datos del gimnasio', QRAcceso: 'Acceso por QR', CambiarClave: 'Cambiar clave', Progreso: 'Mi progreso' };
 
 export default function AppNavigator() {
   return (
     <ThemeProvider>
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={({ route }) => ({ headerShown: WEBNAV && RAIZ.indexOf(route.name) < 0, title: TIT[route.name] || route.name, headerBackTitle: 'Volver', headerTitleAlign: 'center' })}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="HomeSocio" component={HomeSocioScreen} />
         <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
