@@ -16,14 +16,13 @@ import DetalleSocioScreen from './screens/DetalleSocioScreen';
 import AparienciaScreen from './screens/AparienciaScreen';
 import DatosGimnasioScreen from './screens/DatosGimnasioScreen';
 import { ThemeProvider } from './theme/ThemeContext';
-import QRAccesoScreen from './screens/QRAccesoScreen';
 import CambiarClaveScreen from './screens/CambiarClaveScreen';
 import ProgresoScreen from './screens/ProgresoScreen';
 
 const Stack = createNativeStackNavigator();
 const WEBNAV = Platform.OS === 'web';
 const RAIZ = ['Login', 'HomeSocio', 'PanelAdmin'];
-const TIT = { Biblioteca: 'Biblioteca', AsistenteIA: 'Asistente IA', HistorialPagos: 'Historial de pagos', ListaSocios: 'Socios', PagoEfectivo: 'Pago en efectivo', AltaSocio: 'Nuevo socio', DetalleSocio: 'Detalle del socio', Apariencia: 'Apariencia', DatosGimnasio: 'Datos del gimnasio', QRAcceso: 'Acceso por QR', CambiarClave: 'Cambiar clave', Progreso: 'Mi progreso' };
+const TIT = { Biblioteca: 'Biblioteca', AsistenteIA: 'Asistente IA', HistorialPagos: 'Historial de pagos', ListaSocios: 'Socios', PagoEfectivo: 'Pago en efectivo', AltaSocio: 'Nuevo socio', DetalleSocio: 'Detalle del socio', Apariencia: 'Apariencia', DatosGimnasio: 'Datos del gimnasio', CambiarClave: 'Cambiar clave', Progreso: 'Mi progreso' };
 
 export default function AppNavigator() {
   return (
@@ -42,7 +41,6 @@ export default function AppNavigator() {
         <Stack.Screen name="DetalleSocio" component={DetalleSocioScreen} />
             <Stack.Screen name="Apariencia" component={AparienciaScreen} />
             <Stack.Screen name="DatosGimnasio" component={DatosGimnasioScreen} />
-            <Stack.Screen name="QRAcceso" component={QRAccesoScreen} />
             <Stack.Screen name="CambiarClave" component={CambiarClaveScreen} />
             <Stack.Screen name="Progreso" component={ProgresoScreen} />
       </Stack.Navigator>

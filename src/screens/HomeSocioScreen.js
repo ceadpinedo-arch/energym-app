@@ -269,7 +269,6 @@ export default function HomeSocioScreen({ navigation, route }) {
         <View style={styles.grid}>
           <Atajo t={t} emoji="🏋️" label="Mi rutina de hoy" onPress={() => navigation.navigate('Biblioteca', { token })} />
           <Atajo t={t} emoji="📈" label="Mi progreso" onPress={() => navigation.navigate('Progreso', { token })} />
-          <Atajo t={t} emoji="📷" label="Escanear QR" onPress={() => navigation.navigate('QRAcceso', { token })} />
           <Atajo t={t} emoji="🤖" label="Asistente IA" onPress={() => navigation.navigate('AsistenteIA', { token })} />
           <Atajo t={t} emoji="🧾" label="Historial de pagos" onPress={() => navigation.navigate('HistorialPagos', { token })} />
           {gimnasio.spotifyUrl ? <Atajo t={t} emoji="🎵" label="Spotify" onPress={() => Linking.openURL(gimnasio.spotifyUrl)} /> : null}

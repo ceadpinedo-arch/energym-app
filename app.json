@@ -17,12 +17,6 @@
     "plugins": [
       "expo-font",
       "expo-asset",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "TuAccesoGym necesita la cámara para escanear el QR de acceso al gimnasio."
-        }
-      ],
       "expo-notifications",
       [
         "expo-splash-screen",
