@@ -26,7 +26,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ECFDF5"
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "name": "TuAccesoGym",
     "version": "1.0.0",
