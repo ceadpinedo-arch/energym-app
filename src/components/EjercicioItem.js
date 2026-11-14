@@ -13,11 +13,8 @@ export default function EjercicioItem({ item, index, activo, onOpen, onToggle })
 
   useEffect(() => {
     Animated.timing(entrada, {
-      toValue: 1,
-      duration: 380,
-      delay: Math.min(index, 8) * 50,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+      toValue: 1, duration: 360, delay: Math.min(index, 8) * 45,
+      easing: Easing.out(Easing.cubic), useNativeDriver: true,
     }).start();
   }, []);
 
@@ -26,34 +23,19 @@ export default function EjercicioItem({ item, index, activo, onOpen, onToggle })
     Animated.spring(marca, { toValue: activo ? 1 : 0, friction: 5, tension: 140, useNativeDriver: true }).start();
     if (activo) {
       Animated.sequence([
-        Animated.timing(pop, { toValue: 1.3, duration: 110, useNativeDriver: true }),
+        Animated.timing(pop, { toValue: 1.28, duration: 110, useNativeDriver: true }),
         Animated.spring(pop, { toValue: 1, friction: 4, useNativeDriver: true }),
       ]).start();
     }
   }, [activo]);
 
-  const presionar = (v) =>
-    Animated.spring(escala, { toValue: v, friction: 6, tension: 220, useNativeDriver: true }).start();
-
+  const presionar = (v) => Animated.spring(escala, { toValue: v, friction: 6, tension: 220, useNativeDriver: true }).start();
   const imgUri = item.imagenUrl || item.imagen || item.uri || item.url;
   const opacidadMarca = marca.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolate: 'clamp' });
 
   return (
-    <Animated.View
-      style={{
-        opacity: entrada,
-        transform: [
-          { translateY: entrada.interpolate({ inputRange: [0, 1], outputRange: [26, 0] }) },
-          { scale: escala },
-        ],
-      }}
-    >
-      <Pressable
-        style={styles.row}
-        onPress={onOpen}
-        onPressIn={() => presionar(0.97)}
-        onPressOut={() => presionar(1)}
-      >
+    <Animated.View style={{ opacity: entrada, transform: [{ translateY: entrada.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }, { scale: escala }] }}>
+      <Pressable style={styles.row} onPress={onOpen} onPressIn={() => presionar(0.97)} onPressOut={() => presionar(1)}>
         <View style={styles.thumb}>
           {imgUri && typeof imgUri === 'string' && imgUri.startsWith('http') ? (
             <Image source={{ uri: imgUri }} style={styles.img} resizeMode="cover" />
@@ -63,7 +45,7 @@ export default function EjercicioItem({ item, index, activo, onOpen, onToggle })
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.itemTitle}>{item.nombre || 'Ejercicio'}</Text>
-          <Text style={styles.itemDesc}>{item.descripcion || 'Sin descripción'}</Text>
+          <Text style={styles.itemDesc} numberOfLines={2}>{item.descripcion || 'Sin descripción'}</Text>
         </View>
         <Pressable onPress={onToggle} hitSlop={12}>
           <Animated.View style={[styles.check, { transform: [{ scale: pop }] }]}>
@@ -79,16 +61,17 @@ export default function EjercicioItem({ item, index, activo, onOpen, onToggle })
 
 const makeStyles = (t) => StyleSheet.create({
   row: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: t.surface, padding: 12, borderRadius: 20, marginBottom: 10, gap: 12,
-    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: t.surface, padding: 13, borderRadius: 22,
+    marginBottom: 12, gap: 14, borderWidth: 1, borderColor: t.border,
+    shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  thumb: { width: 56, height: 56, borderRadius: 14, backgroundColor: t.primaryBg, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  thumb: { width: 60, height: 60, borderRadius: 16, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(34, 211, 238, 0.3)' },
   img: { width: '100%', height: '100%' },
-  thumbFallback: { fontSize: 22 },
-  itemTitle: { color: t.textPrimary, fontSize: 15, fontWeight: '700' },
-  itemDesc: { color: t.textSecondary, fontSize: 12, marginTop: 2 },
-  check: { width: 26, height: 26, borderRadius: 8, borderWidth: 1, borderColor: t.border, justifyContent: 'center', alignItems: 'center' },
-  relleno: { position: 'absolute', top: -1, left: -1, right: -1, bottom: -1, borderRadius: 8, backgroundColor: t.primary },
-  checkText: { color: t.onPrimary, fontSize: 13, fontWeight: 'bold' },
-  borde: { ...StyleSheet.absoluteFillObject, borderWidth: 1.5, borderColor: t.primary, borderRadius: 20 },
+  thumbFallback: { fontSize: 24 },
+  itemTitle: { color: t.textPrimary, fontSize: 16, fontWeight: '800' },
+  itemDesc: { color: t.textSecondary, fontSize: 12, marginTop: 3 },
+  check: { width: 28, height: 28, borderRadius: 9, borderWidth: 1.5, borderColor: 'rgba(148, 163, 184, 0.4)', backgroundColor: 'rgba(15, 23, 42, 0.6)', justifyContent: 'center', alignItems: 'center' },
+  relleno: { position: 'absolute', top: -1.5, left: -1.5, right: -1.5, bottom: -1.5, borderRadius: 9, backgroundColor: t.cyan || t.primary },
+  checkText: { color: '#060814', fontSize: 14, fontWeight: '900' },
+  borde: { ...StyleSheet.absoluteFillObject, borderWidth: 1.8, borderColor: t.cyan || t.primary, borderRadius: 22 },
 });

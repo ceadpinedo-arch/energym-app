@@ -3,15 +3,14 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTheme, accents, estilos } from './colors';
 
-const STORAGE_KEY = 'energym:apariencia';
-
+const STORAGE_KEY = 'energym:apariencia_v2';
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const sistemaOscuro = useColorScheme() === 'dark';
-  const [modo, setModo] = useState('claro');
-  const [accentKey, setAccentKey] = useState('menta');
-  const [estiloKey, setEstiloKey] = useState('menta');
+  const [modo, setModo] = useState('oscuro');
+  const [accentKey, setAccentKey] = useState('violeta');
+  const [estiloKey, setEstiloKey] = useState('oscuro');
   const [cargado, setCargado] = useState(false);
 
   useEffect(() => {

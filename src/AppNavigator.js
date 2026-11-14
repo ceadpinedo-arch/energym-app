@@ -18,33 +18,51 @@ import DatosGimnasioScreen from './screens/DatosGimnasioScreen';
 import { ThemeProvider } from './theme/ThemeContext';
 import CambiarClaveScreen from './screens/CambiarClaveScreen';
 import ProgresoScreen from './screens/ProgresoScreen';
+import RecordsScreen from './screens/RecordsScreen';
+import CompaneroScreen from './screens/CompaneroScreen';
 
 const Stack = createNativeStackNavigator();
 const WEBNAV = Platform.OS === 'web';
 const RAIZ = ['Login', 'HomeSocio', 'PanelAdmin'];
-const TIT = { Biblioteca: 'Biblioteca', AsistenteIA: 'Asistente IA', HistorialPagos: 'Historial de pagos', ListaSocios: 'Socios', PagoEfectivo: 'Pago en efectivo', AltaSocio: 'Nuevo socio', DetalleSocio: 'Detalle del socio', Apariencia: 'Apariencia', DatosGimnasio: 'Datos del gimnasio', CambiarClave: 'Cambiar clave', Progreso: 'Mi progreso' };
+const TIT = {
+  Biblioteca: 'Biblioteca',
+  AsistenteIA: 'Asistente IA',
+  HistorialPagos: 'Historial de pagos',
+  ListaSocios: 'Socios',
+  PagoEfectivo: 'Pago en efectivo',
+  AltaSocio: 'Nuevo socio',
+  DetalleSocio: 'Detalle del socio',
+  Apariencia: 'Apariencia',
+  DatosGimnasio: 'Datos del gimnasio',
+  CambiarClave: 'Cambiar clave',
+  Progreso: 'Mi progreso',
+  Records: 'Mis récords',
+  Companero: 'Buscar compañero',
+};
 
 export default function AppNavigator() {
   return (
     <ThemeProvider>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={({ route }) => ({ headerShown: WEBNAV && RAIZ.indexOf(route.name) < 0, title: TIT[route.name] || route.name, headerBackTitle: 'Volver', headerTitleAlign: 'center' })}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="HomeSocio" component={HomeSocioScreen} />
-        <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
-        <Stack.Screen name="Biblioteca" component={BibliotecaScreen} />
-        <Stack.Screen name="AsistenteIA" component={AsistenteIAScreen} />
-        <Stack.Screen name="HistorialPagos" component={HistorialPagosScreen} />
-        <Stack.Screen name="ListaSocios" component={ListaSociosScreen} />
-        <Stack.Screen name="PagoEfectivo" component={PagoEfectivoScreen} />
-        <Stack.Screen name="AltaSocio" component={AltaSocioScreen} />
-        <Stack.Screen name="DetalleSocio" component={DetalleSocioScreen} />
-            <Stack.Screen name="Apariencia" component={AparienciaScreen} />
-            <Stack.Screen name="DatosGimnasio" component={DatosGimnasioScreen} />
-            <Stack.Screen name="CambiarClave" component={CambiarClaveScreen} />
-            <Stack.Screen name="Progreso" component={ProgresoScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={({ route }) => ({ headerShown: WEBNAV && RAIZ.indexOf(route.name) < 0, title: TIT[route.name] || route.name, headerBackTitle: 'Volver', headerTitleAlign: 'center' })}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="HomeSocio" component={HomeSocioScreen} />
+          <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
+          <Stack.Screen name="Biblioteca" component={BibliotecaScreen} />
+          <Stack.Screen name="AsistenteIA" component={AsistenteIAScreen} />
+          <Stack.Screen name="HistorialPagos" component={HistorialPagosScreen} />
+          <Stack.Screen name="ListaSocios" component={ListaSociosScreen} />
+          <Stack.Screen name="PagoEfectivo" component={PagoEfectivoScreen} />
+          <Stack.Screen name="AltaSocio" component={AltaSocioScreen} />
+          <Stack.Screen name="DetalleSocio" component={DetalleSocioScreen} />
+          <Stack.Screen name="Apariencia" component={AparienciaScreen} />
+          <Stack.Screen name="DatosGimnasio" component={DatosGimnasioScreen} />
+          <Stack.Screen name="CambiarClave" component={CambiarClaveScreen} />
+          <Stack.Screen name="Progreso" component={ProgresoScreen} />
+          <Stack.Screen name="Records" component={RecordsScreen} />
+          <Stack.Screen name="Companero" component={CompaneroScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </ThemeProvider>
   );
 }
