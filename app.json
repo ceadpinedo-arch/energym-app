@@ -32,6 +32,13 @@
     "name": "TuAccesoGym",
     "version": "1.0.0",
     "slug": "energym-app",
-    "icon": "./assets/icon.png"
+    "icon": "./assets/icon.png",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0fe1996e-72ae-4dd2-b78d-3fd5d55b3eca"
+    },
+    "ios": {}
   }
 }
