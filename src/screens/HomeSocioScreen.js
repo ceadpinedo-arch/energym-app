@@ -170,7 +170,7 @@ export default function HomeSocioScreen({ navigation, route }) {
     try {
       if (red === 'x') { await Linking.openURL('https://twitter.com/intent/tweet?text=' + encodeURIComponent(texto)); return; }
       await Clipboard.setStringAsync(texto);
-      await Linking.openURL(red === 'instagram' ? 'https://www.instagram.com/' : red === 'facebook' ? 'https://www.facebook.com/' : 'https://www.tiktok.com/');
+      await Linking.openURL(red === 'tiktok' ? 'https://www.tiktok.com/' : red === 'facebook' ? 'https://www.facebook.com/' : 'https://www.instagram.com/');
     } catch (e) { alert('El texto quedó copiado.'); }
   };
 
@@ -368,7 +368,7 @@ export default function HomeSocioScreen({ navigation, route }) {
 
           <View style={{ flexDirection: 'row', gap: 8, width: 292, marginTop: 10 }}>
             <Pressable
-              onPress={() => compartirEn('ig_story')}
+              onPress={historiaDirecta}
               style={{ flex: 1.3, backgroundColor: '#7C3AED', paddingVertical: 12, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#C084FC' }}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 12, textAlign: 'center' }}>📸 Historia Instagram</Text>
