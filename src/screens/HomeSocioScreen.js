@@ -1,3 +1,4 @@
+import TarjetaWhatsapp from '../components/TarjetaWhatsapp';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image, Share, Modal, Platform, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -305,6 +306,7 @@ export default function HomeSocioScreen({ navigation, route }) {
           {gimnasio.spotifyUrl ? <Atajo t={t} emoji="🎵" label="Spotify" onPress={() => Linking.openURL(gimnasio.spotifyUrl)} /> : null}
           {contacto.whatsapp ? <Atajo t={t} emoji="💬" label="WhatsApp" onPress={() => Linking.openURL('https://wa.me/' + contacto.whatsapp + '?text=Hola!')} /> : null}
           {contacto.instagram ? <Atajo t={t} emoji="📸" label="Instagram" onPress={() => Linking.openURL('https://instagram.com/' + contacto.instagram)} /> : null}
+      <TarjetaWhatsapp token={token} />
           <Atajo t={t} emoji="🎨" label="Apariencia" onPress={() => navigation.navigate('Apariencia', { token })} />
           <Atajo t={t} emoji="🔑" label="Cambiar contraseña" onPress={() => navigation.navigate('CambiarClave', { token })} />
         </View>
